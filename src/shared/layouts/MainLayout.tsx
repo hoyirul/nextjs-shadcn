@@ -12,6 +12,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ children, title }: MainLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
 
   return (
     <div className="min-h-screen flex bg-[#f9fbff]">

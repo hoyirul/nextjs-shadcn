@@ -1,8 +1,22 @@
+'use client'
+
 import { LayoutDashboard, Database, FileText, FolderOpen, Settings, LogOut, ChevronDown, Users, Building2, FilePlus, FileEdit, FileQuestion, FileCheck2, FolderCog, Share2, FileX, Layers, Briefcase } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { http } from "@/src/core/api/http-client";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 interface SidebarProps {
   isOpen: boolean;
@@ -16,6 +30,7 @@ export function Sidebar({ isOpen, onClose, defaultExpandedItems = [] }: SidebarP
   const [expandedItems, setExpandedItems] = useState<string[]>(defaultExpandedItems);
   const pathname = usePathname();
   const router = useRouter();
+  const [open, setOpen] = useState(false)
 
   const toggleExpand = (item: string) => {
     setExpandedItems(prev =>
@@ -25,10 +40,15 @@ export function Sidebar({ isOpen, onClose, defaultExpandedItems = [] }: SidebarP
 
   const handleLogout = async () => {
     try {
-      
-      router.push('/login');
-    } catch (error) {
-      router.push('/login');
+      const response = await http("/auth/logout", { method: "POST" });
+      if (response.success) {
+        toast.success((response as { message?: string }).message ?? "Logout successful");
+      }
+
+      router.push('/auth/login');
+    } catch (error: any) {
+      toast.error(error.message);
+      router.push('/auth/login');
     }
   };
 
@@ -162,13 +182,13 @@ export function Sidebar({ isOpen, onClose, defaultExpandedItems = [] }: SidebarP
 
               <li>
                 <Link
-                  href="/reports"
+                  href="/dashboard/examples"
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
-                    pathname === "/reports" ? "bg-[#E9F5FE] text-[#4DB1D4]" : "text-[#425166] transition-colors hover:bg-[#F8F9FA]"
+                    pathname === "/dashboard/examples" ? "bg-[#E9F5FE] text-[#4DB1D4]" : "text-[#425166] transition-colors hover:bg-[#F8F9FA]"
                   }`}
                 >
                   <FileText className="size-5" />
-                  <span className="flex-1 text-left">Reports</span>
+                  <span className="flex-1 text-left">Examples</span>
                 </Link>
               </li>
 
@@ -273,28 +293,71 @@ export function Sidebar({ isOpen, onClose, defaultExpandedItems = [] }: SidebarP
               </li>
 
               <li>
-                <Link
-                  href="/settings"
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg ${
-                    pathname === "/settings" ? "bg-[#E9F5FE] text-[#4DB1D4]" : "text-[#425166] transition-colors hover:bg-[#F8F9FA]"
+                <button
+                  onClick={() => toggleExpand("settings")}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-[#F8F9FA] ${
+                    pathname?.startsWith("/dashboard/settings") ? "bg-[#f1f4ff] text-[#00b3d8]" : "text-[#425166]"
                   }`}
                 >
-                  <Settings className="size-5" />
+                  <Settings className="size-5 shrink-0" />
                   <span className="flex-1 text-left">Settings</span>
-                </Link>
+                  <ChevronDown
+                    className={`size-4 shrink-0 transition-transform ${
+                      expandedItems.includes("settings") || pathname?.startsWith("/dashboard/settings") ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {/* Document Control Submenu */}
+                {(expandedItems.includes("settings") || pathname?.startsWith("/dashboard/settings")) && (
+                  <ul className="mt-1 ml-4 space-y-1">
+                    <li>
+                      <Link
+                        href="/dashboard/settings/submission"
+                        className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-colors ${
+                          pathname === "/dashboard/settings/submission" ? "bg-[#E9F5FE] text-[#4DB1D4]" : "text-[#425166] hover:bg-[#F8F9FA]"
+                        }`}
+                      >
+                        <FilePlus className="size-4" />
+                        <span className="flex-1 text-left">Permissions</span>
+                      </Link>
+                    </li>
+                  </ul>
+                )}
               </li>
             </ul>
           </nav>
 
           {/* Logout Button */}
           <div className="p-4 border-t border-[#e9f5fe]">
-            <button 
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[#4DB1D4] text-white transition-colors hover:bg-[#3da0bf]"
-            >
-              <LogOut className="size-5" />
-              <span>Logout</span>
-            </button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                {/* Use your sidebar button as trigger */}
+                <Button
+                  className="w-full flex items-center gap-3 px-4 py-6 rounded-lg bg-slate-500 text-white transition-colors hover:bg-slate-600 cursor-pointer font-semibold"
+                >
+                  <LogOut className="size-5" />
+                  <span>Logout</span>
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[400px]">
+                <DialogHeader>
+                  <DialogTitle>Confirm Logout</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to logout? You will need to login again to access your account.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="flex justify-end gap-2">
+                  <Button variant="outline" className="cursor-pointer" onClick={() => setOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="destructive" className="cursor-pointer" onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </aside>

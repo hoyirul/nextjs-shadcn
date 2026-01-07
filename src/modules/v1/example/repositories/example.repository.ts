@@ -23,15 +23,15 @@ export const exampleRepository = {
     )
 
     const data: ExampleList = {
-      items: res.items?.map((item) => ({
+      items: res.data.items?.map((item) => ({
         id: item.id,
         name: item.name,
         attachment: item.attachment,
         createdAt: item.created_at,
         updatedAt: item.updated_at,
       })) ?? [],
-      pagination: res.pagination ?? {},
-      access: res.access ?? {},
+      pagination: res.data.pagination ?? {},
+      access: res.data.access ?? {},
     }
 
     return data

@@ -2,7 +2,7 @@
 import ExamplePage from "@/src/modules/v1/example/presentations/ExamplePage"
 import { MainLayout } from "@/src/shared/layouts/MainLayout"
 
-export default function Page() {
+export default function ExampleRoutePage() {
   return (
     <MainLayout title="Examples">
       <ExamplePage />

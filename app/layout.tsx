@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Montserrat, Open_Sans } from 'next/font/google'
+import { Toaster } from 'sonner'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -30,6 +31,12 @@ export default function RootLayout({
         className={`${montserrat.variable} ${openSans.variable} antialiased`}
       >
         {children}
+        <Toaster 
+          position="top-center"
+          toastOptions={{ duration: 4000 }}
+          richColors
+          closeButton 
+        />
       </body>
     </html>
   );
