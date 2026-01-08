@@ -3,5 +3,6 @@ export interface ApiResponse<T> {
   code: string
   success: boolean
   message: string
-  data: T
+  data?: T
+  errors?: Record<string, string> | string
 }

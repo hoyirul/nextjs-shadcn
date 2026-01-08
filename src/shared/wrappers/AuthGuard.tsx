@@ -1,24 +1,29 @@
-// src/shared/wrappers/AuthGuard.tsx
-"use client"
+// src/shared/wrappers/auth-guard.ts
+"use client";
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { ReactNode, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-interface Props {
-  children: React.ReactNode
-  isAuthenticated: boolean
-}
-
-export function AuthGuard({ children, isAuthenticated }: Props) {
-  const router = useRouter()
+export function AuthGuard({
+  isAuthenticated,
+  children,
+}: {
+  isAuthenticated: boolean | null;
+  children: ReactNode;
+}) {
+  const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/auth/login')
+    if (isAuthenticated === false) {
+      router.replace("/auth/login");
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated]);
 
-  if (!isAuthenticated) return null
+  // Belum tau status → jangan ngapa2in dulu
+  if (isAuthenticated === null) return null;
 
-  return <>{children}</>
+  if (!isAuthenticated) return null;
+
+  return <>{children}</>;
 }
+

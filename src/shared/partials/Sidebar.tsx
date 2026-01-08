@@ -334,7 +334,7 @@ export function Sidebar({ isOpen, onClose, defaultExpandedItems = [] }: SidebarP
               <DialogTrigger asChild>
                 {/* Use your sidebar button as trigger */}
                 <Button
-                  className="w-full flex items-center gap-3 px-4 py-6 rounded-lg bg-slate-500 text-white transition-colors hover:bg-slate-600 cursor-pointer font-semibold"
+                  className="w-full flex items-center gap-3 px-4 py-6 rounded-lg bg-gradient-to-r from-[#ec4899] to-[#3b82f6] text-white transition-colors hover:from-[#3b82f6] hover:to-[#ec4899] cursor-pointer font-semibold"
                 >
                   <LogOut className="size-5" />
                   <span>Logout</span>

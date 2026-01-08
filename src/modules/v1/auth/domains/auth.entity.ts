@@ -6,5 +6,7 @@ export interface User {
 
 export interface LoginResponse {
   user: User
+  token_type: string
+  access_token: string
   expires_in: number
 }

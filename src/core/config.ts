@@ -8,5 +8,6 @@ export const config = {
   locale: {
     default: process.env.NEXT_PUBLIC_APP_LANGUAGE ?? "id",
   },
+  environment: process.env.NEXT_PUBLIC_APP_ENV ?? "development",
 }
 
