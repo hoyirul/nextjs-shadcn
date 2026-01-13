@@ -71,7 +71,7 @@ export function LoginForm({
       <div className="hidden lg:block relative min-h-screen">
         {/* Left text */}
         <div className="absolute left-[86px] top-[100px] w-[513px] text-white">
-          <h1 className="text-[24px] font-semibold mb-2">Sign in to</h1>
+          <h1 className="text-[24px] font-semibold mb-2">Sign In</h1>
           <h2 className="text-[40px] font-semibold mb-2">
             {branding!.systemName}
           </h2>

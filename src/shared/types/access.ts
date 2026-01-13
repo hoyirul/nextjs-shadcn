@@ -6,4 +6,5 @@ export interface IAccess {
   update?: boolean
   delete?: boolean
   restore?: boolean
+  approval?: boolean
 }

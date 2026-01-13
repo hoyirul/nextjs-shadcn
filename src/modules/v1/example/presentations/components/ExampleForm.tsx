@@ -43,7 +43,7 @@ export function ExampleForm({ data, onSuccess }: Props) {
 
       onSuccess?.()
     } catch (err) {
-      console.error(err)
+      toast.error("An error occurred. Please try again.")
     } finally {
       setLoading(false)
     }

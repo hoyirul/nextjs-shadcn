@@ -14,7 +14,13 @@ import {
   TableHeader,
   TableRow,
 } from "components/ui/table"
-import { Search, Plus, Pencil, Trash2, Eye, Filter } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu"
+import { Search, Plus, Pencil, Trash2, Eye, Filter, MoreVertical, Edit } from "lucide-react"
 import { ExampleUseCase } from "@/src/modules/v1/example/usecases/example.usecase"
 import { Example } from "@/src/modules/v1/example/domains/example.entity"
 import { Pagination } from "@/src/shared/partials/Pagination";
@@ -40,6 +46,7 @@ export function ExampleTable() {
     update: true,
     delete: true,
     restore: true,
+    approval: true
   })
 
   const [search, setSearch] = useState("")
@@ -171,7 +178,6 @@ export function ExampleTable() {
           <Button
             variant="destructive"
             onClick={async () => {
-              console.log("Apply Filters")
               setActiveModal(null)
             }}
           >
@@ -188,6 +194,7 @@ export function ExampleTable() {
             <TableRow className="bg-[#f8fafc]">
             <TableHead className="px-5">Name</TableHead>
             <TableHead className="px-5">Attachment</TableHead>
+            <TableHead className="px-5 justify-center flex">Status</TableHead>
             <TableHead className="px-5 text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -223,48 +230,73 @@ export function ExampleTable() {
                   </TableCell>
 
                   <TableCell className="px-5">
-                    <div className="flex justify-center gap-2">
-                      {access.show && (
-                        <Button
-                          className="cursor-pointer"
-                          size="icon"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedItem(item)
-                            setActiveModal("show")
-                          }}
-                        >
-                          <Eye className="size-4" />
-                        </Button>
-                      )}
+                    {/* badge draft gray */}
+                    <div className="justify-center flex">
+                      {item.status.code === 'draft' ? (
+                        <span className="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800 font-semibold">
+                          {item.status.label}
+                        </span>
+                      ) : item.status.code === 'submitted' ? (
+                        <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 font-semibold">
+                          {item.status.label}
+                        </span>
+                      ) : item.status.code === 'approved' ? (
+                        <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-semibold">
+                          {item.status.label}
+                        </span>
+                      ) : null}
+                    </div>
+                  </TableCell>
 
-                      {access.update && (
-                        <Button
-                          className="cursor-pointer"
-                          size="icon"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedItem(item)
-                            setActiveModal("edit")
-                          }}
-                        >
-                          <Pencil className="size-4 text-[#4db1d4]" />
-                        </Button>
-                      )}
-                      
-                      {access.delete && (
-                        <Button
-                          className="cursor-pointer"
-                          size="icon"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedItem(item)
-                            setActiveModal("delete")
-                          }}
-                        >
-                          <Trash2 className="size-4 text-red-500" />
-                        </Button>
-                      )}
+                  <TableCell className="px-5">
+                    <div className="flex justify-center">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-2 rounded hover:bg-gray-100 flex items-center gap-1">
+                            {/* Aksi <MoreVertical className="w-4 h-4" /> */}
+                            <MoreVertical className="w-4 h-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent align="end" className="w-40">
+                          {access.show && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedItem(item)
+                                setActiveModal("show")
+                              }}
+                            >
+                              <Eye className="size-4 mr-2" />
+                              View
+                            </DropdownMenuItem>
+                          )}
+
+                          {access.update && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedItem(item)
+                                setActiveModal("edit")
+                              }}
+                            >
+                              <Edit className="size-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                          )}
+
+                          {access.delete && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedItem(item)
+                                setActiveModal("delete")
+                              }}
+                              className="text-red-500"
+                            >
+                              <Trash2 className="size-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </TableCell>
                 </TableRow>

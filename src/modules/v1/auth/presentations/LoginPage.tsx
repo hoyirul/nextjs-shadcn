@@ -21,12 +21,12 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setLoading(true)
     try {
-      await authUseCase.login({
+      const response = await authUseCase.login({
         email,
         password,
       })
 
-      toast.success('Login berhasil')
+      toast.success(`Welcome back, ${response.user.name}!`)
       router.push('/dashboard')
     } catch (err: any) {
       if (err instanceof ApiError) {
@@ -36,7 +36,7 @@ export default function LoginPage() {
           setFormErrors(err.errors)
         }
       } else {
-        toast.error('Terjadi kesalahan')
+        toast.error('An unexpected error occurred. Please try again.')
       }
     } finally {
       setLoading(false)

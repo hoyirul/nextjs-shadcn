@@ -2,6 +2,7 @@
 import { config } from "@/src/core/config";
 import { ApiError } from "./errors";
 import { ApiResponse } from "./types";
+import { toast } from "sonner";
 
 type HttpOptions = {
   method?: string;
@@ -46,21 +47,21 @@ export async function http<T = any>(
     });
 
     // LOG REQUEST AND RESPONSE FOR DEBUGGING
-    console.log("HTTP Request:", {
-      url: url.toString(),
-      method: options.method ?? "GET",
-      headers,
-      body: options.body,
-    });
-    console.log("HTTP Response:", {
-      status: res.status,
-      statusText: res.statusText,
-    });
+    // console.log("HTTP Request:", {
+    //   url: url.toString(),
+    //   method: options.method ?? "GET",
+    //   headers,
+    //   body: options.body,
+    // });
+    // console.log("HTTP Response:", {
+    //   status: res.status,
+    //   statusText: res.statusText,
+    // });
 
     const json: ApiResponse<T> = await res.json();
 
     if (!json.success) {
-      console.error("API Error:", json);
+      // console.error("API Error:", json);
       throw new ApiError(
         json.code ?? "API_ERROR",
         json.message ?? "Request failed",
@@ -73,7 +74,7 @@ export async function http<T = any>(
   } catch (error: any) {
     if (error instanceof ApiError) throw error;
 
-    console.error("Network or unknown error:", error);
+    toast.error("An error occurred. Please try again.")
     throw new ApiError(
       "NETWORK_ERROR",
       error.message ?? "Network error",
