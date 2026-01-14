@@ -20,7 +20,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
-import { Search, Plus, Pencil, Trash2, Eye, Filter, MoreVertical, Edit } from "lucide-react"
+import { Search, Plus, Pencil, Trash2, Eye, Filter, MoreVertical, Edit, RefreshCw } from "lucide-react"
 import { ExampleUseCase } from "@/src/modules/v1/example/usecases/example.usecase"
 import { Example } from "@/src/modules/v1/example/domains/example.entity"
 import { Pagination } from "@/src/shared/partials/Pagination";
@@ -46,7 +46,7 @@ export function ExampleTable() {
     update: true,
     delete: true,
     restore: true,
-    approval: true
+    approve: true 
   })
 
   const [search, setSearch] = useState("")
@@ -244,7 +244,15 @@ export function ExampleTable() {
                         <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-semibold">
                           {item.status.label}
                         </span>
-                      ) : null}
+                      ) : item.status.code === 'rejected' ? (
+                        <span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800 font-semibold">
+                          {item.status.label}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 rounded-full text-xs bg-rose-100 text-rose-800 font-semibold">
+                          {item.status.label}
+                        </span>
+                      )}
                     </div>
                   </TableCell>
 
@@ -252,7 +260,7 @@ export function ExampleTable() {
                     <div className="flex justify-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="p-2 rounded hover:bg-gray-100 flex items-center gap-1">
+                          <button className="p-2 rounded hover:bg-gray-100 flex items-center gap-1 cursor-pointer">
                             {/* Aksi <MoreVertical className="w-4 h-4" /> */}
                             <MoreVertical className="w-4 h-4" />
                           </button>
@@ -261,24 +269,26 @@ export function ExampleTable() {
                         <DropdownMenuContent align="end" className="w-40">
                           {access.show && (
                             <DropdownMenuItem
+                              className="text-gray-500 cursor-pointer"
                               onClick={() => {
                                 setSelectedItem(item)
                                 setActiveModal("show")
                               }}
                             >
-                              <Eye className="size-4 mr-2" />
+                              <Eye className="size-4 mr-2 text-gray-500" />
                               View
                             </DropdownMenuItem>
                           )}
 
                           {access.update && (
                             <DropdownMenuItem
+                              className="text-gray-500 cursor-pointer"
                               onClick={() => {
                                 setSelectedItem(item)
                                 setActiveModal("edit")
                               }}
                             >
-                              <Edit className="size-4 mr-2" />
+                              <Edit className="size-4 mr-2 text-sky-500" />
                               Edit
                             </DropdownMenuItem>
                           )}
@@ -289,10 +299,23 @@ export function ExampleTable() {
                                 setSelectedItem(item)
                                 setActiveModal("delete")
                               }}
-                              className="text-red-500"
+                              className="text-gray-500 cursor-pointer"
                             >
-                              <Trash2 className="size-4 mr-2" />
+                              <Trash2 className="size-4 mr-2 text-red-500" />
                               Delete
+                            </DropdownMenuItem>
+                          )}
+
+                          {access.restore && item.deletedAt && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedItem(item)
+                                setActiveModal("restore")
+                              }}
+                              className="text-gray-500 cursor-pointer"
+                            >
+                              <RefreshCw className="size-4 mr-2 text-green-500" />
+                              Restore
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>
@@ -325,11 +348,21 @@ export function ExampleTable() {
         maxWidth="max-w-2xl"
       >
         {selectedItem && (
-          <ExamplePreview item={selectedItem} isImage={isImage} />
+          <ExamplePreview 
+            item={selectedItem} 
+            isImage={isImage} 
+            onUpdated={() =>
+              fetchData(
+                pagination.current_page,
+                pagination.per_page,
+                debouncedSearch
+              )
+            }
+          />
         )}
 
         <div className="flex justify-end mt-4">
-          <Button variant="outline" onClick={() => setActiveModal(null)}>Close</Button>
+          <Button variant="outline" className="cursor-pointer" onClick={() => setActiveModal(null)}>Close</Button>
         </div>
       </Modal>
 
@@ -371,7 +404,7 @@ export function ExampleTable() {
         maxWidth="max-w-md"
       >
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setActiveModal(null)}>
+          <Button variant="outline" className="cursor-pointer" onClick={() => setActiveModal(null)}>
             Cancel
           </Button>
           <Button

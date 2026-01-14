@@ -68,4 +68,14 @@ export class ExampleRepository {
     const res = await http<ApiResponse<any>>(`${this.basePath}/${id}/restore`, { method: "POST" })
     return res
   }
+
+  // ✅ Approval action
+  async approvalAction(id: number, actionCode: string): Promise<ApiResponse<any>> {
+    const res = await http<ApiResponse<any>>(`${this.basePath}/${id}/approval`, {
+      method: "POST",
+      body: { action: actionCode },
+      headers: { "Content-Type": "application/json" },
+    })
+    return res
+  }
 }

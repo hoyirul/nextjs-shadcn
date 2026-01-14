@@ -35,4 +35,9 @@ export class ExampleUseCase {
   async restore(id: number): Promise<ApiResponse<Example>> {
     return await this.repo.restore(id)
   }
+
+  // ✅ Approval action
+  async approvalAction(id: number, actionCode: string): Promise<ApiResponse<Example>> {
+    return await this.repo.approvalAction(id, actionCode)
+  }
 }

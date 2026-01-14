@@ -12,4 +12,5 @@ export interface Example {
   status: Status
   createdAt: string
   updatedAt: string
+  deletedAt?: string | null
 }
